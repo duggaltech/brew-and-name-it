@@ -1,7 +1,24 @@
 import { DrinkBuilder } from "@/components/DrinkBuilder";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-drink.jpg";
 
 const Index = () => {
+  const { user, signOut, loading } = useAuth();
+  const navigate = useNavigate();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
       {/* Hero Section */}
@@ -35,6 +52,36 @@ const Index = () => {
                   <div className="w-2 h-2 bg-accent rounded-full" />
                   AI Names
                 </div>
+              </div>
+              
+              {/* Auth Section */}
+              <div className="flex gap-4 mt-6">
+                {user ? (
+                  <div className="flex items-center gap-4">
+                    <p className="text-sm text-muted-foreground">
+                      Welcome back! Ready to create amazing drinks?
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      onClick={signOut}
+                      className="border-primary/20 hover:bg-primary/10"
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <p className="text-sm text-muted-foreground">
+                      Sign in to save your custom drink recipes
+                    </p>
+                    <Button 
+                      variant="premium" 
+                      onClick={() => navigate('/auth')}
+                    >
+                      Get Started
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
             <div className="relative">
