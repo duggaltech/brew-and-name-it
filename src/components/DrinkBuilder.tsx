@@ -274,80 +274,157 @@ export const DrinkBuilder = () => {
 
           {/* Drink Preview */}
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {drink.type === "hot" ? <Coffee className="w-5 h-5" /> : <Snowflake className="w-5 h-5" />}
-                  Your {drink.type === "hot" ? "Hot" : "Cold"} Drink
+            <Card className="shadow-lg overflow-hidden">
+              <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-primary-glow/5">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  {drink.type === "hot" ? <Coffee className="w-6 h-6" /> : <Snowflake className="w-6 h-6" />}
+                  Your Creation
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Drink Visualization */}
-                <div className={`w-full h-48 rounded-lg border-2 border-dashed p-4 ${
-                  drink.type === "hot" 
-                    ? "bg-gradient-to-b from-orange-50 to-amber-50 border-orange-200" 
-                    : "bg-gradient-to-b from-blue-50 to-cyan-50 border-blue-200"
-                }`}>
-                  {drink.ingredients.length > 0 ? (
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-muted-foreground mb-3">
-                        Recipe Details ({drink.ingredients.length} ingredients):
-                      </div>
-                      <div className="space-y-3">
-                        {drink.ingredients.map((ingredient) => (
-                          <div 
-                            key={ingredient.id}
-                            className="flex items-center justify-between p-3 bg-background/50 rounded-lg border"
-                          >
-                            <div className="flex items-center gap-3 flex-1">
-                              <div 
-                                className="w-3 h-3 rounded-full flex-shrink-0"
-                                style={{ backgroundColor: ingredient.color }}
-                              />
-                              <div className="flex-1">
-                                <div className="font-medium">{ingredient.name}</div>
-                                <div className="text-sm text-muted-foreground capitalize">
-                                  {ingredient.category}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="text"
-                                value={ingredient.amount}
-                                onChange={(e) => updateIngredientAmount(ingredient.id, e.target.value)}
-                                className="w-16 px-2 py-1 text-sm border rounded text-center"
-                                placeholder="1"
-                              />
-                              <span className="text-sm text-muted-foreground min-w-12">
-                                {ingredient.unit}
-                              </span>
-                              <button
-                                onClick={() => removeIngredient(ingredient.id)}
-                                className="ml-2 p-1 hover:text-destructive rounded-sm hover:bg-destructive/10 transition-colors"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+              <CardContent className="space-y-6 p-6">
+                {/* Cup Visualization */}
+                <div className="flex flex-col items-center space-y-4">
+                  <div className={`relative w-48 h-64 rounded-2xl shadow-2xl border-4 ${
+                    drink.type === "hot" 
+                      ? "bg-gradient-to-b from-orange-100 via-amber-50 to-orange-200 border-orange-300" 
+                      : "bg-gradient-to-b from-blue-100 via-cyan-50 to-blue-200 border-blue-300"
+                  }`}>
+                    {/* Cup Handle for Hot Drinks */}
+                    {drink.type === "hot" && (
+                      <div className="absolute -right-6 top-1/2 transform -translate-y-1/2 w-10 h-16 border-4 border-orange-300 rounded-full border-l-transparent bg-gradient-to-r from-transparent to-orange-100/50"></div>
+                    )}
+                    
+                    {/* Straw for Cold Drinks */}
+                    {drink.type === "cold" && drink.ingredients.length > 0 && (
+                      <div className="absolute -top-8 right-1/3 w-1 h-20 bg-gradient-to-b from-red-400 to-red-500 rounded-full transform rotate-12 shadow-lg"></div>
+                    )}
+                    
+                    {/* Cup Content */}
+                    <div className="absolute inset-6 rounded-xl overflow-hidden">
+                      {drink.ingredients.length > 0 ? (
+                        <div className="h-full flex flex-col-reverse">
+                          {drink.ingredients.map((ingredient, index) => (
+                            <div
+                              key={ingredient.id}
+                              className="flex-1 transition-all duration-500 hover:scale-105"
+                              style={{ 
+                                backgroundColor: ingredient.color,
+                                opacity: 0.6 + (index * 0.15)
+                              }}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="h-full flex items-center justify-center">
+                          {drink.type === "hot" ? 
+                            <Coffee className="w-20 h-20 text-muted-foreground/20" /> : 
+                            <Snowflake className="w-20 h-20 text-muted-foreground/20" />
+                          }
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
-                      Start adding ingredients to build your drink
-                    </div>
-                  )}
+                    
+                    {/* Steam effect for hot drinks */}
+                    {drink.type === "hot" && drink.ingredients.length > 0 && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                        <div className="w-1 h-8 bg-gradient-to-t from-muted-foreground/30 to-transparent rounded-full animate-pulse"></div>
+                        <div className="w-1 h-6 bg-gradient-to-t from-muted-foreground/20 to-transparent rounded-full animate-pulse delay-100"></div>
+                        <div className="w-1 h-7 bg-gradient-to-t from-muted-foreground/25 to-transparent rounded-full animate-pulse delay-200"></div>
+                      </div>
+                    )}
+                    
+                    {/* Ice cubes for cold drinks */}
+                    {drink.type === "cold" && drink.ingredients.length > 0 && (
+                      <div className="absolute inset-6 pointer-events-none">
+                        <div className="absolute top-2 left-2 w-3 h-3 bg-white/70 rounded transform rotate-12 shadow-sm"></div>
+                        <div className="absolute top-6 right-3 w-2 h-2 bg-white/60 rounded transform -rotate-45 shadow-sm"></div>
+                        <div className="absolute bottom-8 left-4 w-2 h-2 bg-white/50 rounded transform rotate-45 shadow-sm"></div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Drink Name Display */}
+                  <div className="text-center space-y-2 min-h-[60px] flex flex-col justify-center">
+                    {generatedName ? (
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent animate-fade-in">
+                        {generatedName}
+                      </h3>
+                    ) : drink.ingredients.length > 0 ? (
+                      <p className="text-muted-foreground italic">
+                        Click "Generate Name" to name your creation
+                      </p>
+                    ) : (
+                      <p className="text-muted-foreground">
+                        Your custom drink name will appear here
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                {/* Generated Name */}
-                {generatedName && (
-                  <div className="p-4 bg-gradient-to-r from-primary/10 to-primary-glow/10 rounded-lg border">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-1">
-                      <Sparkles className="w-4 h-4" />
-                      Generated Name:
+                {/* Recipe Details */}
+                {drink.ingredients.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <Badge variant="secondary" className="text-sm px-3 py-1">
+                        {drink.ingredients.length} Ingredient{drink.ingredients.length !== 1 ? 's' : ''}
+                      </Badge>
                     </div>
-                    <div className="text-xl font-bold text-primary">{generatedName}</div>
+                    
+                    <div className="space-y-2 max-h-48 overflow-y-auto bg-muted/30 rounded-lg p-3">
+                      {drink.ingredients.map((ingredient) => (
+                        <div 
+                          key={ingredient.id}
+                          className="flex items-center justify-between p-3 bg-background rounded-lg border shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <div 
+                              className="w-4 h-4 rounded-full border-2 border-background shadow-md"
+                              style={{ backgroundColor: ingredient.color }}
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium text-sm">{ingredient.name}</div>
+                              <div className="text-xs text-muted-foreground capitalize">
+                                {ingredient.category}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={ingredient.amount}
+                              onChange={(e) => updateIngredientAmount(ingredient.id, e.target.value)}
+                              className="w-14 px-2 py-1 text-xs border rounded-md text-center bg-background focus:ring-2 focus:ring-primary/20 transition-all"
+                              placeholder="0"
+                            />
+                            <span className="text-xs text-muted-foreground min-w-fit font-medium">
+                              {ingredient.unit}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeIngredient(ingredient.id)}
+                              className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {drink.ingredients.length === 0 && (
+                  <div className="text-center py-12 text-muted-foreground space-y-3">
+                    <div className="text-4xl">
+                      {drink.type === "hot" ? "☕" : "🧊"}
+                    </div>
+                    <p className="text-lg font-medium">
+                      Start building your perfect {drink.type} drink
+                    </p>
+                    <p className="text-sm">
+                      Select ingredients from the left to see your creation come to life
+                    </p>
                   </div>
                 )}
 
