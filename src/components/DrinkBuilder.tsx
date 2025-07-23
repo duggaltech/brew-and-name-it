@@ -11,38 +11,44 @@ interface Ingredient {
   name: string;
   category: "base" | "flavor" | "topping" | "sweetener";
   color: string;
+  defaultAmount: string;
+  unit: string;
+}
+
+interface DrinkIngredient extends Ingredient {
+  amount: string;
 }
 
 interface Drink {
   type: "hot" | "cold";
-  ingredients: Ingredient[];
+  ingredients: DrinkIngredient[];
   name?: string;
 }
 
 const hotIngredients: Ingredient[] = [
-  { id: "espresso", name: "Espresso", category: "base", color: "#8B4513" },
-  { id: "coffee", name: "Coffee", category: "base", color: "#6F4E37" },
-  { id: "milk", name: "Steamed Milk", category: "base", color: "#F5F5DC" },
-  { id: "chocolate", name: "Hot Chocolate", category: "base", color: "#7B3F00" },
-  { id: "vanilla", name: "Vanilla Syrup", category: "flavor", color: "#F3E5AB" },
-  { id: "caramel", name: "Caramel Syrup", category: "flavor", color: "#D2691E" },
-  { id: "hazelnut", name: "Hazelnut", category: "flavor", color: "#D2B48C" },
-  { id: "cinnamon", name: "Cinnamon", category: "topping", color: "#D2691E" },
-  { id: "foam", name: "Milk Foam", category: "topping", color: "#FFFDD0" },
-  { id: "whipped", name: "Whipped Cream", category: "topping", color: "#FFFACD" },
+  { id: "espresso", name: "Espresso", category: "base", color: "#8B4513", defaultAmount: "2", unit: "shots" },
+  { id: "coffee", name: "Coffee", category: "base", color: "#6F4E37", defaultAmount: "8", unit: "oz" },
+  { id: "milk", name: "Steamed Milk", category: "base", color: "#F5F5DC", defaultAmount: "4", unit: "oz" },
+  { id: "chocolate", name: "Hot Chocolate", category: "base", color: "#7B3F00", defaultAmount: "6", unit: "oz" },
+  { id: "vanilla", name: "Vanilla Syrup", category: "flavor", color: "#F3E5AB", defaultAmount: "1", unit: "pump" },
+  { id: "caramel", name: "Caramel Syrup", category: "flavor", color: "#D2691E", defaultAmount: "1", unit: "pump" },
+  { id: "hazelnut", name: "Hazelnut", category: "flavor", color: "#D2B48C", defaultAmount: "1", unit: "pump" },
+  { id: "cinnamon", name: "Cinnamon", category: "topping", color: "#D2691E", defaultAmount: "1", unit: "pinch" },
+  { id: "foam", name: "Milk Foam", category: "topping", color: "#FFFDD0", defaultAmount: "2", unit: "oz" },
+  { id: "whipped", name: "Whipped Cream", category: "topping", color: "#FFFACD", defaultAmount: "1", unit: "dollop" },
 ];
 
 const coldIngredients: Ingredient[] = [
-  { id: "cold-brew", name: "Cold Brew", category: "base", color: "#4A4A4A" },
-  { id: "iced-coffee", name: "Iced Coffee", category: "base", color: "#8B4513" },
-  { id: "cold-milk", name: "Cold Milk", category: "base", color: "#F0F8FF" },
-  { id: "ice", name: "Ice Cubes", category: "base", color: "#E0F6FF" },
-  { id: "mint", name: "Fresh Mint", category: "flavor", color: "#98FB98" },
-  { id: "coconut", name: "Coconut Milk", category: "flavor", color: "#F5F5DC" },
-  { id: "berry", name: "Berry Syrup", category: "flavor", color: "#8B008B" },
-  { id: "lemon", name: "Lemon Zest", category: "topping", color: "#FFFF00" },
-  { id: "crushed-ice", name: "Crushed Ice", category: "topping", color: "#F0F8FF" },
-  { id: "fruit", name: "Fresh Fruit", category: "topping", color: "#FF6347" },
+  { id: "cold-brew", name: "Cold Brew", category: "base", color: "#4A4A4A", defaultAmount: "8", unit: "oz" },
+  { id: "iced-coffee", name: "Iced Coffee", category: "base", color: "#8B4513", defaultAmount: "6", unit: "oz" },
+  { id: "cold-milk", name: "Cold Milk", category: "base", color: "#F0F8FF", defaultAmount: "4", unit: "oz" },
+  { id: "ice", name: "Ice Cubes", category: "base", color: "#E0F6FF", defaultAmount: "1", unit: "cup" },
+  { id: "mint", name: "Fresh Mint", category: "flavor", color: "#98FB98", defaultAmount: "3", unit: "leaves" },
+  { id: "coconut", name: "Coconut Milk", category: "flavor", color: "#F5F5DC", defaultAmount: "2", unit: "oz" },
+  { id: "berry", name: "Berry Syrup", category: "flavor", color: "#8B008B", defaultAmount: "1", unit: "pump" },
+  { id: "lemon", name: "Lemon Zest", category: "topping", color: "#FFFF00", defaultAmount: "1", unit: "tsp" },
+  { id: "crushed-ice", name: "Crushed Ice", category: "topping", color: "#F0F8FF", defaultAmount: "½", unit: "cup" },
+  { id: "fruit", name: "Fresh Fruit", category: "topping", color: "#FF6347", defaultAmount: "2", unit: "pieces" },
 ];
 
 const generateDrinkName = (drink: Drink): string => {
@@ -77,9 +83,25 @@ export const DrinkBuilder = () => {
       return;
     }
     
-    const newDrink = { ...drink, ingredients: [...drink.ingredients, ingredient] };
+    const drinkIngredient: DrinkIngredient = {
+      ...ingredient,
+      amount: ingredient.defaultAmount
+    };
+    
+    const newDrink = { ...drink, ingredients: [...drink.ingredients, drinkIngredient] };
     setDrink(newDrink);
-    toast(`Added ${ingredient.name}`);
+    toast(`Added ${ingredient.defaultAmount} ${ingredient.unit} ${ingredient.name}`);
+  };
+
+  const updateIngredientAmount = (ingredientId: string, newAmount: string) => {
+    setDrink({
+      ...drink,
+      ingredients: drink.ingredients.map(ingredient =>
+        ingredient.id === ingredientId 
+          ? { ...ingredient, amount: newAmount }
+          : ingredient
+      )
+    });
   };
 
   const removeIngredient = (ingredientId: string) => {
@@ -196,27 +218,45 @@ export const DrinkBuilder = () => {
                   {drink.ingredients.length > 0 ? (
                     <div className="space-y-2">
                       <div className="text-sm font-medium text-muted-foreground mb-3">
-                        Ingredients ({drink.ingredients.length}):
+                        Recipe Details ({drink.ingredients.length} ingredients):
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-3">
                         {drink.ingredients.map((ingredient) => (
-                          <Badge 
-                            key={ingredient.id} 
-                            variant="secondary"
-                            className="flex items-center gap-2 py-1 px-3"
+                          <div 
+                            key={ingredient.id}
+                            className="flex items-center justify-between p-3 bg-background/50 rounded-lg border"
                           >
-                            <div 
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: ingredient.color }}
-                            />
-                            {ingredient.name}
-                            <button
-                              onClick={() => removeIngredient(ingredient.id)}
-                              className="ml-1 hover:text-destructive"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </Badge>
+                            <div className="flex items-center gap-3 flex-1">
+                              <div 
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: ingredient.color }}
+                              />
+                              <div className="flex-1">
+                                <div className="font-medium">{ingredient.name}</div>
+                                <div className="text-sm text-muted-foreground capitalize">
+                                  {ingredient.category}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={ingredient.amount}
+                                onChange={(e) => updateIngredientAmount(ingredient.id, e.target.value)}
+                                className="w-16 px-2 py-1 text-sm border rounded text-center"
+                                placeholder="1"
+                              />
+                              <span className="text-sm text-muted-foreground min-w-12">
+                                {ingredient.unit}
+                              </span>
+                              <button
+                                onClick={() => removeIngredient(ingredient.id)}
+                                className="ml-2 p-1 hover:text-destructive rounded-sm hover:bg-destructive/10 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
