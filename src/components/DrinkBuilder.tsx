@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Coffee, Snowflake, Plus, Trash2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { sanitizeText, validateAmount } from "@/lib/security";
 
 interface Ingredient {
   id: string;
@@ -124,6 +125,7 @@ const coldIngredients: Ingredient[] = [
   { id: "extra-shot-cold", name: "Extra Shot (Iced)", category: "topping", color: "#8B4513", defaultAmount: "1", unit: "shot" },
 ];
 
+
 const generateDrinkName = (drink: Drink): string => {
   const adjectives = drink.type === "hot" 
     ? ["Warm", "Cozy", "Steamy", "Rich", "Smooth", "Creamy", "Bold", "Aromatic"]
@@ -133,8 +135,8 @@ const generateDrinkName = (drink: Drink): string => {
   const flavors = drink.ingredients.filter(i => i.category === "flavor");
   
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const baseName = bases[0]?.name.split(" ")[0] || (drink.type === "hot" ? "Coffee" : "Brew");
-  const flavorName = flavors[0]?.name.split(" ")[0] || "";
+  const baseName = sanitizeText(bases[0]?.name.split(" ")[0] || (drink.type === "hot" ? "Coffee" : "Brew"), 50);
+  const flavorName = sanitizeText(flavors[0]?.name.split(" ")[0] || "", 50);
   
   const combinations = [
     `${adjective} ${flavorName} ${baseName}`,
@@ -143,7 +145,8 @@ const generateDrinkName = (drink: Drink): string => {
     `${baseName} ${adjective}`,
   ].filter(name => name.trim() !== "");
   
-  return combinations[Math.floor(Math.random() * combinations.length)] || `Custom ${drink.type === "hot" ? "Hot" : "Cold"} Drink`;
+  const generatedName = combinations[Math.floor(Math.random() * combinations.length)] || `Custom ${drink.type === "hot" ? "Hot" : "Cold"} Drink`;
+  return sanitizeText(generatedName, 100);
 };
 
 export const DrinkBuilder = () => {
@@ -156,22 +159,31 @@ export const DrinkBuilder = () => {
       return;
     }
     
+    // Limit total ingredients for performance and usability
+    if (drink.ingredients.length >= 15) {
+      toast("Maximum 15 ingredients allowed per drink");
+      return;
+    }
+    
     const drinkIngredient: DrinkIngredient = {
       ...ingredient,
-      amount: ingredient.defaultAmount
+      amount: validateAmount(ingredient.defaultAmount)
     };
     
     const newDrink = { ...drink, ingredients: [...drink.ingredients, drinkIngredient] };
     setDrink(newDrink);
-    toast(`Added ${ingredient.defaultAmount} ${ingredient.unit} ${ingredient.name}`);
+    toast(`Added ${ingredient.defaultAmount} ${ingredient.unit} ${sanitizeText(ingredient.name, 50)}`);
   };
 
+
   const updateIngredientAmount = (ingredientId: string, newAmount: string) => {
+    const sanitizedAmount = validateAmount(newAmount);
+    
     setDrink({
       ...drink,
       ingredients: drink.ingredients.map(ingredient =>
         ingredient.id === ingredientId 
-          ? { ...ingredient, amount: newAmount }
+          ? { ...ingredient, amount: sanitizedAmount }
           : ingredient
       )
     });
@@ -395,6 +407,9 @@ export const DrinkBuilder = () => {
                               onChange={(e) => updateIngredientAmount(ingredient.id, e.target.value)}
                               className="w-14 px-2 py-1 text-xs border rounded-md text-center bg-background focus:ring-2 focus:ring-primary/20 transition-all"
                               placeholder="0"
+                              maxLength={10}
+                              pattern="[\d.,\/½¼¾\s-]*"
+                              title="Enter amount using numbers, fractions, or common measurements"
                             />
                             <span className="text-xs text-muted-foreground min-w-fit font-medium">
                               {ingredient.unit}
