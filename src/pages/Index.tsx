@@ -1,11 +1,13 @@
 import { DrinkBuilder } from "@/components/DrinkBuilder";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-drink.jpg";
 
 const Index = () => {
   const { user, signOut, loading } = useAuth();
+  const { profile } = useProfile();
   const navigate = useNavigate();
 
   if (loading) {
@@ -59,7 +61,7 @@ const Index = () => {
                 {user ? (
                   <div className="flex items-center gap-4">
                     <p className="text-sm text-muted-foreground">
-                      Welcome back! Ready to create amazing drinks?
+                      Welcome back{profile?.display_name ? `, ${profile.display_name}` : ''}! Ready to create amazing drinks?
                     </p>
                     <Button 
                       variant="outline" 
