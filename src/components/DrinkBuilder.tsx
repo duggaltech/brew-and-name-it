@@ -60,6 +60,15 @@ const hotIngredients: Ingredient[] = [
   { id: "heavy-cream", name: "Heavy Cream", category: "flavor", color: "#FFFACD", defaultAmount: "2", unit: "oz" },
   { id: "half-and-half", name: "Half & Half", category: "flavor", color: "#FFF8DC", defaultAmount: "3", unit: "oz" },
   
+  // Sweeteners
+  { id: "sugar", name: "Sugar", category: "sweetener", color: "#FFFFFF", defaultAmount: "1", unit: "tsp" },
+  { id: "stevia", name: "Stevia", category: "sweetener", color: "#E8F5E8", defaultAmount: "1", unit: "packet" },
+  { id: "honey", name: "Honey", category: "sweetener", color: "#FFA500", defaultAmount: "1", unit: "tsp" },
+  { id: "coconut-nectar", name: "Coconut Nectar", category: "sweetener", color: "#F5E6D3", defaultAmount: "1", unit: "tsp" },
+  { id: "brown-sugar-raw", name: "Brown Sugar", category: "sweetener", color: "#A0522D", defaultAmount: "1", unit: "tsp" },
+  { id: "agave", name: "Agave Nectar", category: "sweetener", color: "#DAA520", defaultAmount: "1", unit: "tsp" },
+  { id: "maple-syrup", name: "Maple Syrup", category: "sweetener", color: "#CD853F", defaultAmount: "1", unit: "tsp" },
+  
   // Toppings
   { id: "whipped-cream", name: "Whipped Cream", category: "topping", color: "#FFFACD", defaultAmount: "1", unit: "dollop" },
   { id: "caramel-drizzle", name: "Caramel Drizzle", category: "topping", color: "#D2691E", defaultAmount: "1", unit: "drizzle" },
@@ -99,6 +108,13 @@ const coldIngredients: Ingredient[] = [
   { id: "mango", name: "Mango Syrup", category: "flavor", color: "#FFB347", defaultAmount: "1", unit: "pump" },
   { id: "strawberry", name: "Strawberry Syrup", category: "flavor", color: "#FF69B4", defaultAmount: "1", unit: "pump" },
   { id: "liquid-cane-sugar", name: "Liquid Cane Sugar", category: "sweetener", color: "#F5DEB3", defaultAmount: "1", unit: "pump" },
+  { id: "sugar-cold", name: "Sugar", category: "sweetener", color: "#FFFFFF", defaultAmount: "1", unit: "tsp" },
+  { id: "stevia-cold", name: "Stevia", category: "sweetener", color: "#E8F5E8", defaultAmount: "1", unit: "packet" },
+  { id: "honey-cold", name: "Honey", category: "sweetener", color: "#FFA500", defaultAmount: "1", unit: "tsp" },
+  { id: "coconut-nectar-cold", name: "Coconut Nectar", category: "sweetener", color: "#F5E6D3", defaultAmount: "1", unit: "tsp" },
+  { id: "brown-sugar-cold", name: "Brown Sugar", category: "sweetener", color: "#A0522D", defaultAmount: "1", unit: "tsp" },
+  { id: "agave-cold", name: "Agave Nectar", category: "sweetener", color: "#DAA520", defaultAmount: "1", unit: "tsp" },
+  { id: "simple-syrup", name: "Simple Syrup", category: "sweetener", color: "#F5F5DC", defaultAmount: "1", unit: "pump" },
   
   // Cold Milk & Creamers
   { id: "cold-2percent", name: "Cold 2% Milk", category: "flavor", color: "#F0F8FF", defaultAmount: "4", unit: "oz" },
